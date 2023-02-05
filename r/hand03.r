@@ -85,7 +85,7 @@ ggplot(Predict(m, lwt, race="white", smoke, ui=1), anova = r, pval = TRUE)
 validate(m)
 
 ## ------------------------------------------------------------------------
-load("data/hdis.rda")
+load("../data/hdis.rda")
 str(hdis)
 
 ## ------------------------------------------------------------------------
@@ -113,7 +113,7 @@ p <- ggplot(data = d, aes(x = bpress, y = hdis/total)) +
 p
 
 ## ------------------------------------------------------------------------
-load("data/schoolinf.rda")
+load("../data/schoolinf.rda")
 str(schoolinf)
 
 ## ------------------------------------------------------------------------
@@ -174,7 +174,7 @@ m
 coxph(st ~ sex + strata(age), data=lung)
 
 ## ------------------------------------------------------------------------
-load("data/pbc.rda")
+load("../data/pbc.rda")
 pbc$rx <- factor(pbc$rx, levels = 1:2, labels = c("Placebo", "DPCA"))
 pbc$sex <- factor(pbc$sex, levels = 0:1, labels=c("M","F"))
 

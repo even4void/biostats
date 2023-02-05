@@ -11,7 +11,7 @@ options(digits = 6, show.signif.stars = FALSE)
 theme_set(theme_ipsum(base_size = 11))
 
 ## ------------------------------------------------------------------------
-d <- foreign::read.dta("data/polymorphism.dta")
+d <- foreign::read.dta("../data/polymorphism.dta")
 str(d)
 
 ## ------------------------------------------------------------------------
@@ -52,7 +52,7 @@ summary(m)
 anova(m)
 
 ## ------------------------------------------------------------------------
-load("data/weight.rda")
+load("../data/weight.rda")
 str(weight)
 
 ## ------------------------------------------------------------------------

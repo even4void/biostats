@@ -15,7 +15,7 @@ options(digits = 6, show.signif.stars = FALSE)
 theme_set(theme_ipsum(base_size = 11))
 
 ## ------------------------------------------------------------------------
-load("data/fev.rda")
+load("../data/fev.rda")
 str(FEV)
 
 ## ------------------------------------------------------------------------

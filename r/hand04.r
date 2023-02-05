@@ -18,7 +18,7 @@ options(digits = 6, show.signif.stars = FALSE)
 theme_set(theme_ipsum(base_size = 11))
 
 ## ------------------------------------------------------------------------
-load("data/fat.rda")
+load("../data/fat.rda")
 str(fat)
 
 ## ------------------------------------------------------------------------
@@ -54,7 +54,7 @@ p <- ggplot(data = fat, aes(x = reorder(pilltype, fecfat), y = yhat)) +
 p
 
 ## ------------------------------------------------------------------------
-sepsis <- foreign::read.dta("data/sepsis.dta")
+sepsis <- foreign::read.dta("../data/sepsis.dta")
 str(sepsis)
 
 ## ------------------------------------------------------------------------
