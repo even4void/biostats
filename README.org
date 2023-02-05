@@ -1,0 +1,7 @@
+* Biostatistics methods
+
+This repository holds code for reproducing [Méthodes biostatistiques](https://even4void.github.io/rstats-biostats/) in various languages, mostly non-DSL except Stata.
+
+Work in progress: 10%.
+
+2023-02-05 chl <chl@aliquote.org> - Add R code
