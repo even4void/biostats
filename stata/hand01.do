@@ -17,6 +17,7 @@ oneway age genotype, bonferroni
 
 quietly anova age genotype
 anovaplot, scatter(jitter(2))
+graph export "figs/fig-01-02.eps", replace
 
 regress age i.genotype
 
@@ -38,6 +39,6 @@ rename v weight
 list in 1/5
 
 graph box weight, over(type) over(level)
-graph export "figs/fig-01-02.eps", replace
+graph export "figs/fig-01-03.eps", replace
 
 quietly capture log close
