@@ -1,0 +1,148 @@
+               mean        std  size
+genotype                            
+1.6/1.6   64.642860  11.181077    14
+1.6/0.7   64.379311  13.259535    29
+0.7/0.7   50.375000  10.638766    16
+
+                  sum_sq    df        F    PR(>F)
+C(genotype)  2315.733552   2.0  7.86347  0.000978
+Residual     8245.791872  56.0      NaN       NaN
+
+Test Multiple Comparison ttest_ind 
+FWER=0.05 method=bonf
+alphacSidak=0.02, alphacBonf=0.017
+===============================================
+ group1  group2   stat   pval  pval_corr reject
+-----------------------------------------------
+0.7/0.7 1.6/0.7 -3.6241 0.0008    0.0023   True
+0.7/0.7 1.6/1.6 -3.5788 0.0013    0.0039   True
+1.6/0.7 1.6/1.6 -0.0641 0.9492       1.0  False
+-----------------------------------------------
+
+                             OLS Regression Results                            
+===============================================================================
+Dep. Variable:                     age   R-squared:                       0.219
+Model:                             OLS   Adj. R-squared:                  0.191
+Method:                  Least Squares   F-statistic:                     7.863
+Date:              mar., 07 févr. 2023   Prob (F-statistic):           0.000978
+Time:                         20:59:34   Log-Likelihood:                -229.45
+No. Observations:                   59   AIC:                             464.9
+Df Residuals:                       56   BIC:                             471.1
+Df Model:                            2                                         
+Covariance Type:             nonrobust                                         
+==========================================================================================
+                             coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------------------
+Intercept                 64.6429      3.243     19.933      0.000      58.146      71.140
+C(genotype)[T.1.6/0.7]    -0.2635      3.949     -0.067      0.947      -8.174       7.647
+C(genotype)[T.0.7/0.7]   -14.2679      4.441     -3.213      0.002     -23.164      -5.372
+==============================================================================
+Omnibus:                        2.415   Durbin-Watson:                   0.457
+Prob(Omnibus):                  0.299   Jarque-Bera (JB):                1.765
+Skew:                          -0.236   Prob(JB):                        0.414
+Kurtosis:                       2.296   Cond. No.                         4.46
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+type    level       
+Beef    High   mean     100.000000
+               lower     89.172060
+               upper    110.827940
+        Low    mean      79.200000
+               lower     69.265950
+               upper     89.134050
+Cereal  High   mean      85.900000
+               lower     75.154026
+               upper     96.645974
+        Low    mean      83.900000
+               lower     72.662595
+               upper     95.137405
+Name: weight, dtype: float64
+
+                             OLS Regression Results                            
+===============================================================================
+Dep. Variable:                  weight   R-squared:                       0.230
+Model:                             OLS   Adj. R-squared:                  0.166
+Method:                  Least Squares   F-statistic:                     3.584
+Date:              mar., 07 févr. 2023   Prob (F-statistic):             0.0230
+Time:                         20:59:34   Log-Likelihood:                -162.85
+No. Observations:                   40   AIC:                             333.7
+Df Residuals:                       36   BIC:                             340.4
+Df Model:                            3                                         
+Covariance Type:             nonrobust                                         
+=====================================================================================================
+                                        coef    std err          t      P>|t|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------
+Intercept                           100.0000      4.729     21.148      0.000      90.410     109.590
+C(type)[T.Cereal]                   -14.1000      6.687     -2.109      0.042     -27.662      -0.538
+C(level)[T.Low]                     -20.8000      6.687     -3.110      0.004     -34.362      -7.238
+C(type)[T.Cereal]:C(level)[T.Low]    18.8000      9.457      1.988      0.054      -0.380      37.980
+==============================================================================
+Omnibus:                        2.134   Durbin-Watson:                   2.112
+Prob(Omnibus):                  0.344   Jarque-Bera (JB):                1.934
+Skew:                          -0.442   Prob(JB):                        0.380
+Kurtosis:                       2.385   Cond. No.                         6.85
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+                             OLS Regression Results                            
+===============================================================================
+Dep. Variable:                  weight   R-squared:                       0.145
+Model:                             OLS   Adj. R-squared:                  0.099
+Method:                  Least Squares   F-statistic:                     3.149
+Date:              mar., 07 févr. 2023   Prob (F-statistic):             0.0546
+Time:                         20:59:34   Log-Likelihood:                -164.93
+No. Observations:                   40   AIC:                             335.9
+Df Residuals:                       37   BIC:                             340.9
+Df Model:                            2                                         
+Covariance Type:             nonrobust                                         
+=====================================================================================
+                        coef    std err          t      P>|t|      [0.025      0.975]
+-------------------------------------------------------------------------------------
+Intercept            95.3000      4.255     22.396      0.000      86.678     103.922
+C(type)[T.Cereal]    -4.7000      4.914     -0.957      0.345     -14.656       5.256
+C(level)[T.Low]     -11.4000      4.914     -2.320      0.026     -21.356      -1.444
+==============================================================================
+Omnibus:                        0.998   Durbin-Watson:                   1.789
+Prob(Omnibus):                  0.607   Jarque-Bera (JB):                1.036
+Skew:                          -0.324   Prob(JB):                        0.596
+Kurtosis:                       2.550   Cond. No.                         3.19
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+   df_resid     ssr  df_diff  ss_diff         F    Pr(>F)
+0      37.0  8933.0      0.0      NaN       NaN       NaN
+1      36.0  8049.4      1.0    883.6  3.951798  0.054468
+
+Test Multiple Comparison ttest_ind 
+FWER=0.05 method=bonf
+alphacSidak=0.01, alphacBonf=0.008
+=======================================================
+   group1      group2     stat   pval  pval_corr reject
+-------------------------------------------------------
+  Beef.High    Beef.Low  3.2021 0.0049    0.0296   True
+  Beef.High Cereal.High  2.0909  0.051     0.306  False
+  Beef.High  Cereal.Low  2.3339 0.0314    0.1884  False
+   Beef.Low Cereal.High -1.0357 0.3141       1.0  False
+   Beef.Low  Cereal.Low -0.7089 0.4875       1.0  False
+Cereal.High  Cereal.Low   0.291 0.7744       1.0  False
+-------------------------------------------------------
+
+      Multiple Comparison of Means - Tukey HSD, FWER=0.05      
+===============================================================
+   group1      group2   meandiff p-adj   lower    upper  reject
+---------------------------------------------------------------
+  Beef.High    Beef.Low    -20.8 0.0183 -38.8102 -2.7898   True
+  Beef.High Cereal.High    -14.1 0.1698 -32.1102  3.9102  False
+  Beef.High  Cereal.Low    -16.1 0.0937 -34.1102  1.9102  False
+   Beef.Low Cereal.High      6.7 0.7493 -11.3102 24.7102  False
+   Beef.Low  Cereal.Low      4.7 0.8953 -13.3102 22.7102  False
+Cereal.High  Cereal.Low     -2.0 0.9905 -20.0102 16.0102  False
+---------------------------------------------------------------
+
