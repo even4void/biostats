@@ -1,0 +1,245 @@
+'data.frame':	24 obs. of  3 variables:
+ $ fecfat  : num  44.5 33 19.1 9.4 71.3 51.2 7.3 21 5 4.6 ...
+ $ pilltype: Factor w/ 4 levels "None","Tablet",..: 1 1 1 1 1 1 2 2 2 2 ...
+ $ subject : Factor w/ 6 levels "1","2","3","4",..: 1 2 3 4 5 6 1 2 3 4 ...
+fecfat      N= 24  
+
++--------+-------+--+-------+-------+
+|        |       | N|   Mean|     SD|
++--------+-------+--+-------+-------+
+|pilltype|   None| 6|38.0833|22.4745|
+|        | Tablet| 6|16.5333|13.3209|
+|        |Capsule| 6|17.4167|12.9375|
+|        | Coated| 6|31.0667|24.2641|
++--------+-------+--+-------+-------+
+| Overall|       |24|25.7750|20.0021|
++--------+-------+--+-------+-------+
+
+Error: subject
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  5   5588    1118               
+
+Error: Within
+          Df Sum Sq Mean Sq F value Pr(>F)
+pilltype   3   2009     670    6.26 0.0057
+Residuals 15   1605     107               
+Linear mixed model fit by REML ['lmerMod']
+Formula: fecfat ~ pilltype + (1 | subject)
+   Data: fat
+
+REML criterion at convergence: 169.1
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.2101 -0.6151 -0.0027  0.4571  1.7256 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ subject  (Intercept) 253      15.9    
+ Residual             107      10.3    
+Number of obs: 24, groups:  subject, 6
+
+Fixed effects:
+                Estimate Std. Error t value
+(Intercept)        38.08       7.74    4.92
+pilltypeTablet    -21.55       5.97   -3.61
+pilltypeCapsule   -20.67       5.97   -3.46
+pilltypeCoated     -7.02       5.97   -1.17
+
+Correlation of Fixed Effects:
+            (Intr) plltyT plltypCp
+pilltypTblt -0.386                
+pilltypCpsl -0.386  0.500         
+pilltypeCtd -0.386  0.500  0.500  
+                    2.5 %   97.5 %
+.sig01            8.10894  30.2338
+.sigma            7.03296  13.6222
+(Intercept)      22.52784  53.6388
+pilltypeTablet  -32.83157 -10.2684
+pilltypeCapsule -31.94823  -9.3851
+pilltypeCoated  -18.29823   4.2649
+'data.frame':	455 obs. of  23 variables:
+ $ id      : num  1 2 3 4 5 6 7 8 9 10 ...
+ $ treat   : Factor w/ 2 levels "Placebo","Ibuprofen": 1 2 1 2 1 2 2 1 2 1 ...
+ $ race    : Factor w/ 3 levels "White","Black",..: 1 2 2 1 1 1 1 1 1 1 ...
+ $ apache  : num  27 14 33 3 5 13 34 11 25 20 ...
+ $ o2del   : num  539 NA 551 1376 NA ...
+ $ fate    : Factor w/ 2 levels "Alive","Dead": 2 1 2 1 1 1 2 1 1 1 ...
+ $ followup: num  50 720 33 720 720 720 45 720 720 720 ...
+ $ temp0   : num  95.4 101.6 101 101 101.4 ...
+ $ temp1   : num  93.9 99 98.9 100.2 101.4 ...
+ $ temp2   : num  93.6 99.8 97.2 100 101.8 ...
+ $ temp3   : num  93 99.8 NA 99.5 101.4 ...
+ $ temp4   : num  90.3 99.6 NA 99.7 101.4 ...
+ $ temp5   : num  93.2 100.2 94.8 99.1 101 ...
+ $ temp6   : num  95 100.2 95.5 99.3 102.6 ...
+ $ temp7   : num  96.2 99 NA 99.6 100.8 ...
+ $ temp8   : num  98.8 99.9 97.2 98 100.6 ...
+ $ temp9   : num  97.5 99.8 99.2 97.8 99.8 ...
+ $ temp10  : num  97.8 99.6 NA 97.6 99.6 ...
+ $ temp11  : num  99.1 99.4 NA 98.4 99.6 ...
+ $ temp12  : num  95.6 101.2 NA 98 99.8 ...
+ $ temp13  : num  NA 101 NA 98.4 100.8 ...
+ $ temp14  : num  NA NA NA NA NA NA NA NA NA NA ...
+ $ temp15  : num  NA 100.6 NA 98.8 100 ...
+ - attr(*, "datalabel")= chr ""
+ - attr(*, "time.stamp")= chr " 2 Sep 2008 10:17"
+ - attr(*, "formats")= chr [1:23] "%9.0g" "%9.0g" "%9.0g" "%9.0g" ...
+ - attr(*, "types")= int [1:23] 254 254 254 254 254 254 254 254 254 254 ...
+ - attr(*, "val.labels")= chr [1:23] "" "treatmnt" "race" "" ...
+ - attr(*, "var.labels")= chr [1:23] "Patient ID" "Treatment" "Race" "Baseline APACHE Score" ...
+ - attr(*, "version")= int 12
+ - attr(*, "label.table")=List of 3
+  ..$ treatmnt: Named int [1:2] 0 1
+  .. ..- attr(*, "names")= chr [1:2] "Placebo" "Ibuprofen"
+  ..$ fate    : Named int [1:2] 0 1
+  .. ..- attr(*, "names")= chr [1:2] "Alive" "Dead"
+  ..$ race    : Named int [1:3] 0 1 2
+  .. ..- attr(*, "names")= chr [1:3] "White" "Black" "Other"
+
+
+Descriptive Statistics by treat
+
++------------+---+-----------------+-----------------+-----------------+
+|            |N  |Placebo          |Ibuprofen        |Combined         |
+|            |   |(N=231)          |(N=224)          |(N=455)          |
++------------+---+-----------------+-----------------+-----------------+
+|fate : Dead |455|    40%  ( 92)   |    38%  ( 84)   |    39%  (176)   |
++------------+---+-----------------+-----------------+-----------------+
+|race : White|455|    68%  (156)   |    61%  (137)   |    64%  (293)   |
++------------+---+-----------------+-----------------+-----------------+
+|    Black   |   |    25%  ( 58)   |    32%  ( 72)   |    29%  (130)   |
++------------+---+-----------------+-----------------+-----------------+
+|    Other   |   |     7%  ( 17)   |     7%  ( 15)   |     7%  ( 32)   |
++------------+---+-----------------+-----------------+-----------------+
+|apache      |454|  10.0/14.5/19.0 |  10.0/14.0/21.0 |  10.0/14.0/20.0 |
++------------+---+-----------------+-----------------+-----------------+
+|temp0       |455| 99.9/100.8/101.7| 99.3/100.6/101.5| 99.5/100.7/101.6|
++------------+---+-----------------+-----------------+-----------------+
+|temp1       |420| 99.2/100.5/101.5| 98.6/ 99.5/100.5| 98.9/ 99.9/101.1|
++------------+---+-----------------+-----------------+-----------------+
+Linear mixed model fit by REML ['lmerMod']
+Formula: value ~ time * treat + (1 | id)
+   Data: d
+
+REML criterion at convergence: 5030
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-4.506 -0.508 -0.028  0.487  4.876 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ id       (Intercept) 0.734    0.857   
+ Residual             0.351    0.592   
+Number of obs: 2296, groups:  id, 328
+
+Fixed effects:
+                    Estimate Std. Error t value
+(Intercept)         37.99699    0.07264  523.06
+time                -0.07178    0.00858   -8.36
+treatIbuprofen      -0.23434    0.10467   -2.24
+time:treatIbuprofen -0.09926    0.01237   -8.03
+
+Correlation of Fixed Effects:
+            (Intr) time   trtIbp
+time        -0.354              
+treatIbprfn -0.694  0.246       
+tm:trtIbprf  0.246 -0.694 -0.354
+
+==================================================================
+                          Model 1       Model 2       Model 3     
+------------------------------------------------------------------
+(Intercept)                  38.00 ***     38.00 ***     38.00 ***
+                             (0.07)        (0.08)        (0.08)   
+time                         -0.07 ***     -0.07 ***     -0.07 ***
+                             (0.01)        (0.01)        (0.01)   
+treatIbuprofen               -0.23 *       -0.23 *       -0.23 *  
+                             (0.10)        (0.12)        (0.11)   
+time:treatIbuprofen          -0.10 ***     -0.10 ***     -0.10 ***
+                             (0.01)        (0.02)        (0.02)   
+------------------------------------------------------------------
+AIC                        5042.04       4699.52       4767.09    
+BIC                        5076.47       4745.43       4807.26    
+Log Likelihood            -2515.02      -2341.76      -2376.54    
+Num. obs.                  2296          2296          2296       
+Num. groups: id             328           328           328       
+Var: id (Intercept)           0.73          1.01          0.87    
+Var: Residual                 0.35          0.23          0.24    
+Var: id time                                0.03                  
+Cov: id (Intercept) time                   -0.08                  
+Var: id.1 time                                            0.02    
+==================================================================
+*** p < 0.001; ** p < 0.01; * p < 0.05
+Data: d
+Models:
+m1: value ~ time * treat + (1 | id)
+m3: value ~ time * treat + (1 | id) + (0 + time | id)
+m2: value ~ time * treat + (time | id)
+   npar  AIC  BIC logLik deviance  Chisq Df Pr(>Chisq)
+m1    6 5020 5054  -2504     5008                     
+m3    7 4747 4787  -2366     4733 274.85  1     <2e-16
+m2    8 4679 4725  -2332     4663  69.71  1     <2e-16
+null device 
+          1 
+
+Call:
+geeglm(formula = value ~ time * treat, data = d, id = id, corstr = "exch", 
+    scale.fix = TRUE)
+
+ Coefficients:
+                    Estimate Std.err     Wald Pr(>|W|)
+(Intercept)          37.9970  0.0544 4.88e+05  < 2e-16
+time                 -0.0718  0.0153 2.21e+01  2.5e-06
+treatIbuprofen       -0.2343  0.0810 8.37e+00   0.0038
+time:treatIbuprofen  -0.0993  0.0221 2.01e+01  7.2e-06
+
+Correlation structure = exchangeable 
+Scale is fixed.
+
+  Link = identity 
+
+Estimated Correlation Parameters:
+      Estimate Std.err
+alpha        0       0
+Number of clusters:   2296  Maximum cluster size: 1 
+          [,1]      [,2]      [,3]      [,4]
+[1,]  0.002959 -0.000685 -0.002959  0.000685
+[2,] -0.000685  0.000233  0.000685 -0.000233
+[3,] -0.002959  0.000685  0.006560 -0.001514
+[4,]  0.000685 -0.000233 -0.001514  0.000489
+          [,1]      [,2]      [,3]      [,4]
+[1,]  0.002949 -0.000681 -0.002949  0.000681
+[2,] -0.000681  0.000227  0.000681 -0.000227
+[3,] -0.002949  0.000681  0.006122 -0.001413
+[4,]  0.000681 -0.000227 -0.001413  0.000471
+'data.frame':	2148 obs. of  4 variables:
+ $ resp : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ id   : int  0 0 0 0 1 1 1 1 2 2 ...
+ $ age  : int  -2 -1 0 1 -2 -1 0 1 -2 -1 ...
+ $ smoke: int  0 0 0 0 0 0 0 0 0 0 ...
+
+ mean by age, smoke 
+
++----+
+|   N|
+|resp|
++----+
++---+-----+-----+-----+
+|age|  0  |  1  | ALL |
++---+-----+-----+-----+
+|  7|  350|  187|  537|
+|   |0.160|0.166|0.162|
++---+-----+-----+-----+
+|  8|  350|  187|  537|
+|   |0.149|0.209|0.169|
++---+-----+-----+-----+
+|  9|  350|  187|  537|
+|   |0.143|0.187|0.158|
++---+-----+-----+-----+
+| 10|  350|  187|  537|
+|   |0.106|0.139|0.117|
++---+-----+-----+-----+
+|ALL| 1400|  748| 2148|
+|   |0.139|0.175|0.152|
++---+-----+-----+-----+

@@ -1,0 +1,167 @@
+'data.frame':	59 obs. of  3 variables:
+ $ id      : num  1 2 3 4 5 6 7 8 9 10 ...
+ $ age     : num  43 47 55 57 61 63 63 69 70 72 ...
+ $ genotype: Factor w/ 3 levels "1.6/1.6","1.6/0.7",..: 1 1 1 1 1 1 1 1 1 1 ...
+ - attr(*, "datalabel")= chr ""
+ - attr(*, "time.stamp")= chr "16 Apr 2001 14:58"
+ - attr(*, "formats")= chr [1:3] "%9.0g" "%9.0g" "%9.0g"
+ - attr(*, "types")= int [1:3] 102 102 102
+ - attr(*, "val.labels")= chr [1:3] "" "" "rflp"
+ - attr(*, "var.labels")= chr [1:3] "ID Number" "Age at Diagnosis" "Genotype"
+ - attr(*, "version")= int 7
+ - attr(*, "label.table")=List of 1
+  ..$ rflp: Named int [1:3] 1 2 3
+  .. ..- attr(*, "names")= chr [1:3] "1.6/1.6" "1.6/0.7" "0.7/0.7"
+age      N= 59  
+
++--------+-------+--+-------+-------+
+|        |       | N|   Mean|     SD|
++--------+-------+--+-------+-------+
+|genotype|1.6/1.6|14|64.6429|11.1811|
+|        |1.6/0.7|29|64.3793|13.2595|
+|        |0.7/0.7|16|50.3750|10.6388|
++--------+-------+--+-------+-------+
+| Overall|       |59|60.6441|13.4943|
++--------+-------+--+-------+-------+
+            Df Sum Sq Mean Sq F value  Pr(>F)
+genotype     2   2316    1158    7.86 0.00098
+Residuals   56   8246     147                
+
+	Pairwise comparisons using t tests with pooled SD 
+
+data:  age and genotype 
+
+        1.6/1.6 1.6/0.7
+1.6/0.7 0.947   -      
+0.7/0.7 0.002   5e-04  
+
+P value adjustment method: none 
+
+	Pairwise comparisons using t tests with non-pooled SD 
+
+data:  age and genotype 
+
+        1.6/1.6 1.6/0.7
+1.6/0.7 0.946   -      
+0.7/0.7 0.001   4e-04  
+
+P value adjustment method: none 
+
+	Two Sample t-test
+
+data:  age by genotype
+t = 0.06408, df = 41, p-value = 0.949
+alternative hypothesis: true difference in means between group 1.6/1.6 and group 1.6/0.7 is not equal to 0
+95 percent confidence interval:
+ -8.04237  8.56947
+sample estimates:
+mean in group 1.6/1.6 mean in group 1.6/0.7 
+              64.6429               64.3793 
+
+
+Call:
+lm(formula = age ~ genotype, data = d)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-26.379  -8.643   0.625   8.621  22.621 
+
+Coefficients:
+                Estimate Std. Error t value Pr(>|t|)
+(Intercept)       64.643      3.243   19.93   <2e-16
+genotype1.6/0.7   -0.264      3.949   -0.07   0.9470
+genotype0.7/0.7  -14.268      4.441   -3.21   0.0022
+
+Residual standard error: 12.1 on 56 degrees of freedom
+Multiple R-squared:  0.219,	Adjusted R-squared:  0.191 
+F-statistic: 7.86 on 2 and 56 DF,  p-value: 0.000978
+
+Analysis of Variance Table
+
+Response: age
+          Df Sum Sq Mean Sq F value   Pr(>F)
+genotype   2   2316  1157.9   7.863 0.000978
+Residuals 56   8246   147.2                 
+'data.frame':	10 obs. of  4 variables:
+ $ V1: int  90 76 90 64 86 51 72 90 95 78
+ $ V2: int  73 102 118 104 81 107 100 87 117 111
+ $ V3: int  107 95 97 80 98 74 74 67 89 58
+ $ V4: int  98 74 56 111 95 88 82 77 86 92
+  weight type level
+1     90 Beef   Low
+2     76 Beef   Low
+3     90 Beef   Low
+4     64 Beef   Low
+5     86 Beef   Low
+6     51 Beef   Low
+    type level weight   Lower    Upper
+2   Beef   Low   79.2 69.2660  89.1340
+1   Beef  High  100.0 89.1721 110.8279
+4 Cereal   Low   83.9 72.6626  95.1374
+3 Cereal  High   85.9 75.1540  96.6460
+            Df Sum Sq Mean Sq F value Pr(>F)
+type         1    221     221    0.99  0.327
+level        1   1300    1300    5.81  0.021
+type:level   1    884     884    3.95  0.054
+Residuals   36   8049     224               
+            Df Sum Sq Mean Sq F value Pr(>F)
+type         1    221     221    0.91  0.345
+level        1   1300    1300    5.38  0.026
+Residuals   37   8933     241               
+Analysis of Variance Table
+
+Model 1: weight ~ type + level
+Model 2: weight ~ type * level
+  Res.Df  RSS Df Sum of Sq     F Pr(>F)
+1     37 8933                          
+2     36 8049  1     883.6 3.952 0.0545
+
+	Two Sample t-test
+
+data:  weight by level
+t = -2.323, df = 38, p-value = 0.0256
+alternative hypothesis: true difference in means between group Low and group High is not equal to 0
+95 percent confidence interval:
+ -21.33588  -1.46412
+sample estimates:
+ mean in group Low mean in group High 
+             81.55              92.95 
+
+      t 
+5.39495 
+
+	Pairwise comparisons using t tests with pooled SD 
+
+data:  weight and interaction(type, level) 
+
+            Beef.Low Cereal.Low Beef.High
+Cereal.Low  1.00     -          -        
+Beef.High   0.02     0.13       -        
+Cereal.High 1.00     1.00       0.25     
+
+P value adjustment method: bonferroni 
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: lm(formula = weight ~ tx, data = d)
+
+Linear Hypotheses:
+                              Estimate Std. Error t value Pr(>|t|)
+Cereal.Low - Beef.Low == 0        4.70       6.69    0.70    0.895
+Beef.High - Beef.Low == 0        20.80       6.69    3.11    0.018
+Cereal.High - Beef.Low == 0       6.70       6.69    1.00    0.749
+Beef.High - Cereal.Low == 0      16.10       6.69    2.41    0.094
+Cereal.High - Cereal.Low == 0     2.00       6.69    0.30    0.991
+Cereal.High - Beef.High == 0    -14.10       6.69   -2.11    0.170
+(Adjusted p values reported -- single-step method)
+
+      len       supp         dose     
+ Min.   : 4.2   OJ:30   Min.   :0.50  
+ 1st Qu.:13.1   VC:30   1st Qu.:0.50  
+ Median :19.2           Median :1.00  
+ Mean   :18.8           Mean   :1.17  
+ 3rd Qu.:25.3           3rd Qu.:2.00  
+ Max.   :33.9           Max.   :2.00  
