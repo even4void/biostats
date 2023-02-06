@@ -1,3 +1,7 @@
+version 13
+set more off
+log using hand01, replace
+
 // genotype data
 use ../data/polymorphism, clear
 
@@ -7,6 +11,7 @@ tabulate genotype, summarize(age)
 
 graph twoway histogram age, by(genotype, col(3) legend(off)) ///
   freq bfcolor(gs3) blcolor(none)
+graph export "figs/fig-01-01.eps", replace
 
 oneway age genotype, bonferroni
 
@@ -33,3 +38,6 @@ rename v weight
 list in 1/5
 
 graph box weight, over(type) over(level)
+graph export "figs/fig-01-02.eps", replace
+
+quietly capture log close

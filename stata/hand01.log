@@ -1,0 +1,155 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /home/chl/cwd/biostats/stata/hand01.log
+  log type:  text
+ opened on:   6 Feb 2023, 10:42:27
+
+. 
+. // genotype data
+. use ../data/polymorphism, clear
+
+. 
+. describe
+
+Contains data from ../data/polymorphism.dta
+  obs:            59                          
+ vars:             3                          16 Apr 2001 14:58
+ size:           708                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+id              float   %9.0g                 ID Number
+age             float   %9.0g                 Age at Diagnosis
+genotype        float   %9.0g      rflp       Genotype
+-------------------------------------------------------------------------------
+Sorted by:  genotype  age
+
+. 
+. tabulate genotype, summarize(age)
+
+            |     Summary of Age at Diagnosis
+   Genotype |        Mean   Std. Dev.       Freq.
+------------+------------------------------------
+    1.6/1.6 |   64.642857   11.181077          14
+    1.6/0.7 |    64.37931   13.259535          29
+    0.7/0.7 |      50.375   10.638766          16
+------------+------------------------------------
+      Total |   60.644068   13.494268          59
+
+. 
+. graph twoway histogram age, by(genotype, col(3) legend(off)) ///
+>   freq bfcolor(gs3) blcolor(none)
+
+. graph export "figs/fig-01-01.eps", replace
+(note: file figs/fig-01-01.eps not found)
+(file figs/fig-01-01.eps written in EPS format)
+
+. 
+. oneway age genotype, bonferroni
+
+                        Analysis of Variance
+    Source              SS         df      MS            F     Prob > F
+------------------------------------------------------------------------
+Between groups      2315.73355      2   1157.86678      7.86     0.0010
+ Within groups      8245.79187     56   147.246283
+------------------------------------------------------------------------
+    Total           10561.5254     58   182.095266
+
+Bartlett's test for equal variances:  chi2(2) =   1.0798  Prob>chi2 = 0.583
+
+                  Comparison of Age at Diagnosis by Genotype
+                                (Bonferroni)
+Row Mean-|
+Col Mean |    1.6/1.6    1.6/0.7
+---------+----------------------
+ 1.6/0.7 |   -.263547
+         |      1.000
+         |
+ 0.7/0.7 |   -14.2679   -14.0043
+         |      0.007      0.001
+
+. 
+. quietly anova age genotype
+
+. anovaplot, scatter(jitter(2))
+
+. 
+. regress age i.genotype
+
+      Source |       SS       df       MS              Number of obs =      59
+-------------+------------------------------           F(  2,    56) =    7.86
+       Model |  2315.73355     2  1157.86678           Prob > F      =  0.0010
+    Residual |  8245.79187    56  147.246283           R-squared     =  0.2193
+-------------+------------------------------           Adj R-squared =  0.1914
+       Total |  10561.5254    58  182.095266           Root MSE      =  12.135
+
+------------------------------------------------------------------------------
+         age |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    genotype |
+    1.6/0.7  |  -.2635468   3.949057    -0.07   0.947    -8.174458    7.647365
+    0.7/0.7  |  -14.26786   4.440775    -3.21   0.002     -23.1638   -5.371915
+             |
+       _cons |   64.64286   3.243084    19.93   0.000     58.14618    71.13953
+------------------------------------------------------------------------------
+
+. 
+. // weight data
+. import delimited ../data/weight.dat, delimiter(space, collapse) ///
+>   varnames(nonames) clear
+(4 vars, 10 obs)
+
+. 
+. gen id = _n
+
+. reshape long v, i(id)
+(note: j = 1 2 3 4)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                       10   ->      40
+Number of variables                   5   ->       3
+j variable (4 values)                     ->   _j
+xij variables:
+                           v1 v2 ... v4   ->   v
+-----------------------------------------------------------------------------
+
+. egen type = seq(), t(2) b(20)
+
+. label define type 1 "Beef" 2 "Cereal"
+
+. label values type type
+
+. egen level = seq(), t(2) b(10)
+
+. label define level 1 "Low" 2 "High"
+
+. label values level level
+
+. drop id _j
+
+. rename v weight
+
+. 
+. list in 1/5
+
+     +-----------------------+
+     | weight   type   level |
+     |-----------------------|
+  1. |     90   Beef     Low |
+  2. |     73   Beef     Low |
+  3. |    107   Beef     Low |
+  4. |     98   Beef     Low |
+  5. |     76   Beef     Low |
+     +-----------------------+
+
+. 
+. graph box weight, over(type) over(level)
+
+. graph export "figs/fig-01-02.eps", replace
+(note: file figs/fig-01-02.eps not found)
+(file figs/fig-01-02.eps written in EPS format)
+
+. 
+. quietly capture log close
