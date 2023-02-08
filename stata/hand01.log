@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /home/chl/cwd/biostats/stata/hand01.log
   log type:  text
- opened on:   6 Feb 2023, 10:42:27
+ opened on:   8 Feb 2023, 19:21:27
 
 . 
 . // genotype data
@@ -42,7 +42,6 @@ Sorted by:  genotype  age
 >   freq bfcolor(gs3) blcolor(none)
 
 . graph export "figs/fig-01-01.eps", replace
-(note: file figs/fig-01-01.eps not found)
 (file figs/fig-01-01.eps written in EPS format)
 
 . 
@@ -74,6 +73,9 @@ Col Mean |    1.6/1.6    1.6/0.7
 
 . anovaplot, scatter(jitter(2))
 
+. graph export "figs/fig-01-02.eps", replace
+(file figs/fig-01-02.eps written in EPS format)
+
 . 
 . regress age i.genotype
 
@@ -101,18 +103,20 @@ Col Mean |    1.6/1.6    1.6/0.7
 (4 vars, 10 obs)
 
 . 
+. xpose, clear
+
 . gen id = _n
 
 . reshape long v, i(id)
-(note: j = 1 2 3 4)
+(note: j = 1 2 3 4 5 6 7 8 9 10)
 
 Data                               wide   ->   long
 -----------------------------------------------------------------------------
-Number of obs.                       10   ->      40
-Number of variables                   5   ->       3
-j variable (4 values)                     ->   _j
+Number of obs.                        4   ->      40
+Number of variables                  11   ->       3
+j variable (10 values)                    ->   _j
 xij variables:
-                           v1 v2 ... v4   ->   v
+                          v1 v2 ... v10   ->   v
 -----------------------------------------------------------------------------
 
 . egen type = seq(), t(2) b(20)
@@ -138,18 +142,198 @@ xij variables:
      | weight   type   level |
      |-----------------------|
   1. |     90   Beef     Low |
-  2. |     73   Beef     Low |
-  3. |    107   Beef     Low |
-  4. |     98   Beef     Low |
-  5. |     76   Beef     Low |
+  2. |     76   Beef     Low |
+  3. |     90   Beef     Low |
+  4. |     64   Beef     Low |
+  5. |     86   Beef     Low |
      +-----------------------+
 
 . 
 . graph box weight, over(type) over(level)
 
-. graph export "figs/fig-01-02.eps", replace
-(note: file figs/fig-01-02.eps not found)
-(file figs/fig-01-02.eps written in EPS format)
+. graph export "figs/fig-01-03.eps", replace
+(file figs/fig-01-03.eps written in EPS format)
+
+. 
+. quietly anova weight type level type#level
+
+. anovaplot level type, scatter(ms(i)) yscale(r(75 105))
+
+. graph export "figs/fig-01-04.eps", replace
+(file figs/fig-01-04.eps written in EPS format)
+
+. 
+. preserve
+
+. statsby, by(type level) clear: ci weight
+(running ci on estimation sample)
+
+      command:  ci weight
+           ub:  r(ub)
+           lb:  r(lb)
+           se:  r(se)
+         mean:  r(mean)
+            N:  r(N)
+           by:  type level
+
+Statsby groups
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+....
+
+. list
+
+     +-------------------------------------------------------------+
+     |   type   level         ub         lb         se   mean    N |
+     |-------------------------------------------------------------|
+  1. |   Beef     Low   89.13405   69.26595   4.391406   79.2   10 |
+  2. |   Beef    High   110.8279   89.17206   4.786555    100   10 |
+  3. | Cereal     Low   95.13741    72.6626   4.967561   83.9   10 |
+  4. | Cereal    High   96.64597   75.15402   4.750321   85.9   10 |
+     +-------------------------------------------------------------+
+
+. restore
+
+. 
+. anova weight type level type#level
+
+                           Number of obs =      40     R-squared     =  0.2300
+                           Root MSE      = 14.9531     Adj R-squared =  0.1658
+
+                  Source |  Partial SS    df       MS           F     Prob > F
+              -----------+----------------------------------------------------
+                   Model |      2404.1     3  801.366667       3.58     0.0230
+                         |
+                    type |       220.9     1       220.9       0.99     0.3269
+                   level |      1299.6     1      1299.6       5.81     0.0211
+              type#level |       883.6     1       883.6       3.95     0.0545
+                         |
+                Residual |      8049.4    36  223.594444   
+              -----------+----------------------------------------------------
+                   Total |     10453.5    39  268.038462   
+
+. estimates store m1
+
+. anova weight type level
+
+                           Number of obs =      40     R-squared     =  0.1455
+                           Root MSE      = 15.5381     Adj R-squared =  0.0993
+
+                  Source |  Partial SS    df       MS           F     Prob > F
+              -----------+----------------------------------------------------
+                   Model |      1520.5     2      760.25       3.15     0.0546
+                         |
+                    type |       220.9     1       220.9       0.91     0.3450
+                   level |      1299.6     1      1299.6       5.38     0.0260
+                         |
+                Residual |        8933    37  241.432432   
+              -----------+----------------------------------------------------
+                   Total |     10453.5    39  268.038462   
+
+. estimates store m2
+
+. estimates stats m1 m2
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |    Obs    ll(null)   ll(model)     df          AIC         BIC
+-------------+---------------------------------------------------------------
+          m1 |     40   -168.0738    -162.847      4      333.694    340.4495
+          m2 |     40   -168.0738   -164.9301      3     335.8602    340.9268
+-----------------------------------------------------------------------------
+               Note:  N=Obs used in calculating BIC; see [R] BIC note
+
+. lrtest m1 m2
+
+Likelihood-ratio test                                 LR chi2(1)  =      4.17
+(Assumption: m2 nested in m1)                         Prob > chi2 =    0.0412
+
+. 
+. ttest weight, by(level)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+     Low |      20       81.55    3.271468    14.63045    74.70274    88.39726
+    High |      20       92.95    3.658785    16.36259    85.29207    100.6079
+---------+--------------------------------------------------------------------
+combined |      40       87.25    2.588622    16.37188    82.01402    92.48598
+---------+--------------------------------------------------------------------
+    diff |               -11.4    4.908076               -21.33588   -1.464119
+------------------------------------------------------------------------------
+    diff = mean(Low) - mean(High)                                 t =  -2.3227
+Ho: diff = 0                                     degrees of freedom =       38
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0128         Pr(|T| > |t|) = 0.0256          Pr(T > t) = 0.9872
+
+. scalar tobs = r(t)^2
+
+. display `=tobs'
+5.3949464
+
+. 
+. pwmean weight, over(type level) pveffects mcompare(bonf)
+
+Pairwise comparisons of means with equal variances
+
+over         : type level
+
+---------------------------
+             |    Number of
+             |  Comparisons
+-------------+-------------
+  type#level |            6
+---------------------------
+
+-----------------------------------------------------------------------
+                               |                            Bonferroni
+                        weight |   Contrast   Std. Err.      t    P>|t|
+-------------------------------+---------------------------------------
+                    type#level |
+    (Beef#High) vs (Beef#Low)  |       20.8   6.687218     3.11   0.022
+   (Cereal#Low) vs (Beef#Low)  |        4.7   6.687218     0.70   1.000
+  (Cereal#High) vs (Beef#Low)  |        6.7   6.687218     1.00   1.000
+  (Cereal#Low) vs (Beef#High)  |      -16.1   6.687218    -2.41   0.128
+ (Cereal#High) vs (Beef#High)  |      -14.1   6.687218    -2.11   0.252
+(Cereal#High) vs (Cereal#Low)  |          2   6.687218     0.30   1.000
+-----------------------------------------------------------------------
+
+. 
+. egen tx = concat(type level), decode punct(.)
+
+. graph box weight, over(tx) b1title("Treatment (Diet type x Diet level)")
+
+. graph export "figs/fig-01-05.eps", replace
+(file figs/fig-01-05.eps written in EPS format)
+
+. 
+. pwmean weight, over(type level) pveffects mcompare(tukey)
+
+Pairwise comparisons of means with equal variances
+
+over         : type level
+
+---------------------------
+             |    Number of
+             |  Comparisons
+-------------+-------------
+  type#level |            6
+---------------------------
+
+-----------------------------------------------------------------------
+                               |                              Tukey
+                        weight |   Contrast   Std. Err.      t    P>|t|
+-------------------------------+---------------------------------------
+                    type#level |
+    (Beef#High) vs (Beef#Low)  |       20.8   6.687218     3.11   0.018
+   (Cereal#Low) vs (Beef#Low)  |        4.7   6.687218     0.70   0.895
+  (Cereal#High) vs (Beef#Low)  |        6.7   6.687218     1.00   0.749
+  (Cereal#Low) vs (Beef#High)  |      -16.1   6.687218    -2.41   0.094
+ (Cereal#High) vs (Beef#High)  |      -14.1   6.687218    -2.11   0.170
+(Cereal#High) vs (Cereal#Low)  |          2   6.687218     0.30   0.991
+-----------------------------------------------------------------------
 
 . 
 . quietly capture log close

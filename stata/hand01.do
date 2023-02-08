@@ -25,6 +25,7 @@ regress age i.genotype
 import delimited ../data/weight.dat, delimiter(space, collapse) ///
   varnames(nonames) clear
 
+xpose, clear
 gen id = _n
 reshape long v, i(id)
 egen type = seq(), t(2) b(20)
@@ -40,5 +41,33 @@ list in 1/5
 
 graph box weight, over(type) over(level)
 graph export "figs/fig-01-03.eps", replace
+
+quietly anova weight type level type#level
+anovaplot level type, scatter(ms(i)) yscale(r(75 105))
+graph export "figs/fig-01-04.eps", replace
+
+preserve
+statsby, by(type level) clear: ci weight
+list
+restore
+
+anova weight type level type#level
+estimates store m1
+anova weight type level
+estimates store m2
+estimates stats m1 m2
+lrtest m1 m2
+
+ttest weight, by(level)
+scalar tobs = r(t)^2
+display `=tobs'
+
+pwmean weight, over(type level) pveffects mcompare(bonf)
+
+egen tx = concat(type level), decode punct(.)
+graph box weight, over(tx) b1title("Treatment (Diet type x Diet level)")
+graph export "figs/fig-01-05.eps", replace
+
+pwmean weight, over(type level) pveffects mcompare(tukey)
 
 quietly capture log close
