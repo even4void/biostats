@@ -1,4 +1,4 @@
-* Biostatistics methods
+* Biostatistical computing
 
 ** Overview
 

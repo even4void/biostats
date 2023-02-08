@@ -1,0 +1,479 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /home/chl/cwd/biostats/stata/hand02.log
+  log type:  text
+ opened on:   9 Feb 2023, 21:33:08
+
+. 
+. // FEV data
+. import delimited ../data/fev.csv, clear
+(6 vars, 654 obs)
+
+. 
+. describe, simple
+id      age     fev     height  sex     smoke
+
+. summarize id-height
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+          id |       654    37169.57    23690.86        201      90001
+         age |       654    9.931193    2.953935          3         19
+         fev |       654     2.63678    .8670591       .791      5.793
+      height |       654    61.14358    5.703513         46         74
+
+. tabulate sex
+
+        sex |      Freq.     Percent        Cum.
+------------+-----------------------------------
+     female |        318       48.62       48.62
+       male |        336       51.38      100.00
+------------+-----------------------------------
+      Total |        654      100.00
+
+. tabulate smoke
+
+             smoke |      Freq.     Percent        Cum.
+-------------------+-----------------------------------
+    current smoker |         65        9.94        9.94
+non-current smoker |        589       90.06      100.00
+-------------------+-----------------------------------
+             Total |        654      100.00
+
+. 
+. codebook age
+
+-------------------------------------------------------------------------------
+age                                                                 (unlabeled)
+-------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [3,19]                       units:  1
+         unique values:  17                       missing .:  0/654
+
+                  mean:   9.93119
+              std. dev:   2.95394
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 6         8        10        12        14
+
+. replace age = 4 if age == 3
+(2 real changes made)
+
+. replace age = 18 if age == 19
+(3 real changes made)
+
+. replace height = height * 2.54
+(654 real changes made)
+
+. generate lfev = log(fev)
+
+. order lfev, after(fev)
+
+. encode sex, gen(sex_)
+
+. drop sex
+
+. rename sex_ sex
+
+. encode smoke, gen(smoke_)
+
+. drop smoke
+
+. rename smoke_ smoke
+
+. 
+. twoway kdensity age, name(h1)
+
+. twoway kdensity fev, name(h2)
+
+. twoway kdensity height, name(h3)
+
+. graph combine h1 h2 h3, row(1)
+
+. graph export "figs/fig-02-01.eps", replace
+(file figs/fig-02-01.eps written in EPS format)
+
+. 
+. graph box age, over(smoke) over(sex) name(h4)
+
+. graph box fev, over(smoke) over(sex) name(h5)
+
+. graph combine h4 h5, row(2)
+
+. graph export "figs/fig-02-02.eps", replace
+(file figs/fig-02-02.eps written in EPS format)
+
+. 
+. twoway scatter fev age if sex == 1, ytitle(FEV) mc(ebblue) ms(oh) ///
+>   || scatter fev age if sex == 2, mc(orange) ms(oh) ///
+>   || lowess fev age, legend(off) name(h6)
+
+. twoway scatter fev height if sex == 1, ytitle(Height) mc(ebblue) ms(oh) ///
+>   || scatter fev height if sex == 2, mc(orange) ms(oh) ///
+>   || lowess fev height, legend(off) name(h7)
+
+. graph combine h6 h7, row(1)
+
+. graph export "figs/fig-02-03.eps", replace
+(file figs/fig-02-03.eps written in EPS format)
+
+. 
+. regress fev height
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  1,   652) = 1994.73
+       Model |   369.98585     1   369.98585           Prob > F      =  0.0000
+    Residual |  120.933983   652  .185481569           R-squared     =  0.7537
+-------------+------------------------------           Adj R-squared =  0.7533
+       Total |  490.919833   653  .751791475           Root MSE      =  .43068
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      height |   .0519589   .0011634    44.66   0.000     .0496745    .0542433
+       _cons |  -5.432679   .1814599   -29.94   0.000    -5.788995   -5.076362
+------------------------------------------------------------------------------
+
+. predict yhat
+(option xb assumed; fitted values)
+
+. predict double rstd, rstandard
+
+. 
+. lowess rstd yhat, yline(-2) yline(2)
+
+. graph export "figs/fig-02-04.eps", replace
+(file figs/fig-02-04.eps written in EPS format)
+
+. 
+. generate fevsqr3 = fev^(1/3)
+
+. drop yhat rstd
+
+. quietly regress fevsqr3 height
+
+. predict yhat
+(option xb assumed; fitted values)
+
+. predict double rstd, rstandard
+
+. gen outliers = 0
+
+. replace outliers = 1 if abs(rstd) > 3
+(6 real changes made)
+
+. tostring id, gen(id_)
+id_ generated as str5
+
+. 
+. twoway lowess rstd yhat, ms(i) yline(-2) yline(2) ///
+>   || scatter rstd yhat if outliers, mlabel(id_) ///
+>   || scatter rstd yhat if outliers == 0, ms(oh) ///
+>   legend(off) ytitle(Standard residuals) ms(o)
+
+. graph export "figs/fig-02-05.eps", replace
+(file figs/fig-02-05.eps written in EPS format)
+
+. 
+. predict cook, cooksd, if e(sample)
+
+. dfbeta
+                       _dfbeta_1: dfbeta(height)
+
+. list in 1/5
+
+     +------------------------------------------------------------------+
+  1. |  id  | id_  |  age  |    fev  |      lfev  |  height  |     sex  |
+     | 301  | 301  |    9  |  1.708  |  .5353231  |  144.78  |  female  |
+     |-------------------------------+-----------------------+----------|
+     |              smoke |  fevsqr3 |     yhat |       rstd | outliers |
+     | non-current smoker | 1.195352 | 1.268072 | -1.0571598 |        0 |
+     |------------------------------------------------------------------|
+     |                cook            |            _dfbet~1             |
+     |            .0013091            |            .0300929             |
+     +------------------------------------------------------------------+
+
+     +------------------------------------------------------------------+
+  2. |  id  | id_  |  age  |    fev  |      lfev  |  height  |     sex  |
+     | 451  | 451  |    8  |  1.724  |  .5446472  |  171.45  |  female  |
+     |-------------------------------+-----------------------+----------|
+     |              smoke |  fevsqr3 |     yhat |       rstd | outliers |
+     | non-current smoker | 1.199073 | 1.514051 | -4.5814713 |        1 |
+     |------------------------------------------------------------------|
+     |                cook            |            _dfbet~1             |
+     |            .0361334            |              -.2033             |
+     +------------------------------------------------------------------+
+
+     +------------------------------------------------------------------+
+  3. |  id  | id_  |  age  |    fev  |      lfev  |  height  |     sex  |
+     | 501  | 501  |    7  |   1.72  |  .5423243  |  138.43  |  female  |
+     |-------------------------------+-----------------------+----------|
+     |              smoke |  fevsqr3 |     yhat |       rstd | outliers |
+     | non-current smoker | 1.198145 | 1.209506 | -.16526087 |        0 |
+     |------------------------------------------------------------------|
+     |                cook            |            _dfbet~1             |
+     |            .0000494            |            .0075411             |
+     +------------------------------------------------------------------+
+
+     +------------------------------------------------------------------+
+  4. |  id  | id_  |  age  |    fev  |      lfev  |  height  |     sex  |
+     | 642  | 642  |    9  |  1.558  |  .4434029  |  134.62  |    male  |
+     |-------------------------------+-----------------------+----------|
+     |              smoke |  fevsqr3 |     yhat |       rstd | outliers |
+     | non-current smoker | 1.159282 | 1.174366 | -.21953693 |        0 |
+     |------------------------------------------------------------------|
+     |                cook            |            _dfbet~1             |
+     |            .0001126            |            .0122862             |
+     +------------------------------------------------------------------+
+
+     +------------------------------------------------------------------+
+  5. |  id  | id_  |  age  |    fev  |      lfev  |  height  |     sex  |
+     | 901  | 901  |    9  |  1.895  |  .6392188  |  144.78  |    male  |
+     |-------------------------------+-----------------------+----------|
+     |              smoke |  fevsqr3 |     yhat |       rstd | outliers |
+     | non-current smoker | 1.237475 | 1.268072 | -.44480848 |        0 |
+     |------------------------------------------------------------------|
+     |                cook            |            _dfbet~1             |
+     |            .0002318            |            .0126529             |
+     +------------------------------------------------------------------+
+
+. 
+. gen height2 = height^2
+
+. regress fev height height2
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  2,   651) = 1115.40
+       Model |  380.020687     2  190.010344           Prob > F      =  0.0000
+    Residual |  110.899146   651  .170351991           R-squared     =  0.7741
+-------------+------------------------------           Adj R-squared =  0.7734
+       Total |  490.919833   653  .751791475           Root MSE      =  .41274
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      height |  -.0984444   .0196281    -5.02   0.000    -.1369864   -.0599024
+     height2 |   .0004891   .0000637     7.68   0.000     .0003639    .0006142
+       _cons |   6.026876   1.503184     4.01   0.000     3.075203     8.97855
+------------------------------------------------------------------------------
+
+. predict yhat1
+(option xb assumed; fitted values)
+
+. label variable yhat1 "Quadratic term"
+
+. estimates store m1
+
+. fp <height>, scale: regress fev <height>
+(fitting 44 models)
+(....10%....20%....30%....40%....50%....60%....70%....80%....90%....100%)
+
+Fractional polynomial comparisons:
+-------------------------------------------------------------------------------
+      height |   df    Deviance  Res. s.d.   Dev. dif.   P(*)   Powers
+-------------+-----------------------------------------------------------------
+     omitted |    0   1668.387      0.867    973.124    0.000               
+      linear |    1    752.109      0.431     56.847    0.000   1           
+       m = 1 |    2    701.097      0.414      5.834    0.055   3           
+       m = 2 |    4    695.263      0.413      0.000       --   2 3         
+-------------------------------------------------------------------------------
+(*) P = sig. level of model with m = 2 based on F with 649
+    denominator dof.
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  2,   651) = 1115.83
+       Model |  380.053695     2  190.026848           Prob > F      =  0.0000
+    Residual |  110.866138   651  .170301288           R-squared     =  0.7742
+-------------+------------------------------           Adj R-squared =  0.7735
+       Total |  490.919833   653  .751791475           Root MSE      =  .41268
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    height_1 |  -.0157149   .0065067    -2.42   0.016    -.0284916   -.0029382
+    height_2 |   .0014036   .0002787     5.04   0.000     .0008563     .001951
+       _cons |   1.066063   .5171885     2.06   0.040     .0505043    2.081622
+------------------------------------------------------------------------------
+
+. predict yhat2
+(option xb assumed; fitted values)
+
+. label variable yhat2 "Fractional polynomial"
+
+. estimates store m2
+
+. // Note: To reproduce rms::rcs, we would need the following steps:
+. // _pctile height, p(10 50 90)
+. // local k1 = r(r1)
+. // local k2 = r(r2)
+. // local k3 = r(r3)
+. // mkspline height3 = height, cubic knots(`k1' `k2' `k3')
+. mkspline height3 = height, cubic
+
+. regress fev height3*
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  4,   649) =  564.90
+       Model |  381.379725     4  95.3449313           Prob > F      =  0.0000
+    Residual |  109.540108   649   .16878291           R-squared     =  0.7769
+-------------+------------------------------           Adj R-squared =  0.7755
+       Total |  490.919833   653  .751791475           Root MSE      =  .41083
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    height31 |   .0257469   .0053138     4.85   0.000     .0153126    .0361812
+    height32 |    .068904   .0209349     3.29   0.001     .0277957    .1100123
+    height33 |  -.3698081   .1379974    -2.68   0.008    -.6407833   -.0988329
+    height34 |   .6705333   .2478999     2.70   0.007     .1837505    1.157316
+       _cons |  -1.836412    .717873    -2.56   0.011    -3.246046   -.4267778
+------------------------------------------------------------------------------
+
+. predict yhat3
+(option xb assumed; fitted values)
+
+. label variable yhat3 "Restricted cubic splines"
+
+. estimates store m3
+
+. estimates table m*
+
+-----------------------------------------------------
+    Variable |     m1           m2           m3      
+-------------+---------------------------------------
+      height |  -.0984444                            
+     height2 |  .00048908                            
+    height_1 |               -.0157149               
+    height_2 |               .00140364               
+    height31 |                            .02574687  
+    height32 |                            .06890397  
+    height33 |                           -.36980806  
+    height34 |                            .67053326  
+       _cons |  6.0268765    1.0660631   -1.8364119  
+-----------------------------------------------------
+
+. 
+. twoway scatter fev height, ms(oh) ///
+>   || connected yhat1 height,  sort(height) ms(i) lc(ebblue) lp(l) ///
+>   || connected yhat2 height, sort(height) ms(i) lc(orange) lp(l) ///
+>   || connected yhat3 height, sort(height) ms(i) lc(erose) lp(l) ///
+>   ytitle(Fitted values) legend(order(2 3 4) position(11) ring(0))
+
+. graph export "figs/fig-02-06.eps", replace
+(file figs/fig-02-06.eps written in EPS format)
+
+. 
+. regress fev c.smoke
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  1,   652) =   41.79
+       Model |   29.569683     1   29.569683           Prob > F      =  0.0000
+    Residual |   461.35015   652  .707592255           R-squared     =  0.0602
+-------------+------------------------------           Adj R-squared =  0.0588
+       Total |  490.919833   653  .751791475           Root MSE      =  .84119
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       smoke |  -.7107189   .1099426    -6.46   0.000    -.9266033   -.4948346
+       _cons |    3.98758   .2115313    18.85   0.000     3.572216    4.402945
+------------------------------------------------------------------------------
+
+. 
+. ttest fev, by(smoke)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ current |      65    3.276862    .0930244    .7499863    3.091024    3.462699
+non-curr |     589    2.566143    .0350451    .8505215    2.497314    2.634971
+---------+--------------------------------------------------------------------
+combined |     654     2.63678    .0339047    .8670591    2.570204    2.703355
+---------+--------------------------------------------------------------------
+    diff |            .7107189    .1099426                .4948346    .9266033
+------------------------------------------------------------------------------
+    diff = mean(current) - mean(non-curr)                         t =   6.4645
+Ho: diff = 0                                     degrees of freedom =      652
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 1.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 0.0000
+
+. 
+. xtile ageQ4 = age, nq(4)
+
+. tabstat fev, by(ageQ4) stats(mean sd)
+
+Summary for variables: fev
+     by categories of: ageQ4 (4 quantiles of age)
+
+   ageQ4 |      mean        sd
+---------+--------------------
+       1 |  1.858228  .4200734
+       2 |  2.551571  .5196139
+       3 |  3.110728  .6393486
+       4 |  3.599427  .7958033
+---------+--------------------
+   Total |   2.63678  .8670591
+------------------------------
+
+. 
+. // egen fevQ4mean = mean(fev), by(ageQ4)
+. preserve
+
+. collapse (mean) fev, by(ageQ4)
+
+. restore
+
+. 
+. regress fev age
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  1,   652) =  877.86
+       Model |  281.697674     1  281.697674           Prob > F      =  0.0000
+    Residual |  209.222159   652  .320892882           R-squared     =  0.5738
+-------------+------------------------------           Adj R-squared =  0.5732
+       Total |  490.919833   653  .751791475           Root MSE      =  .56647
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |    .223869   .0075558    29.63   0.000     .2090323    .2387057
+       _cons |   .4138361   .0782285     5.29   0.000     .2602259    .5674462
+------------------------------------------------------------------------------
+
+. regress fev ageQ4
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  1,   652) =  805.35
+       Model |  271.287998     1  271.287998           Prob > F      =  0.0000
+    Residual |  219.631835   652  .336858643           R-squared     =  0.5526
+-------------+------------------------------           Adj R-squared =  0.5519
+       Total |  490.919833   653  .751791475           Root MSE      =   .5804
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       ageQ4 |   .5867989   .0206775    28.38   0.000     .5461964    .6274014
+       _cons |   1.314239   .0518358    25.35   0.000     1.212454    1.416025
+------------------------------------------------------------------------------
+
+. anova fev ageQ4
+
+                           Number of obs =     654     R-squared     =  0.5562
+                           Root MSE      = .578972     Adj R-squared =  0.5541
+
+                  Source |  Partial SS    df       MS           F     Prob > F
+              -----------+----------------------------------------------------
+                   Model |  273.034238     3  91.0114126     271.51     0.0000
+                         |
+                   ageQ4 |  273.034238     3  91.0114126     271.51     0.0000
+                         |
+                Residual |  217.885596   650  .335208609   
+              -----------+----------------------------------------------------
+                   Total |  490.919833   653  .751791475   
+
+. 
+. quietly capture log close
