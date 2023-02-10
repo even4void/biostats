@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /home/chl/cwd/biostats/stata/hand01.log
   log type:  text
- opened on:   8 Feb 2023, 19:21:27
+ opened on:  10 Feb 2023, 18:40:00
 
 . 
 . // genotype data
@@ -334,6 +334,42 @@ over         : type level
  (Cereal#High) vs (Beef#High)  |      -14.1   6.687218    -2.11   0.170
 (Cereal#High) vs (Cereal#Low)  |          2   6.687218     0.30   0.991
 -----------------------------------------------------------------------
+
+. 
+. // ToothGrowth data
+. use ../data/toothgrowth, clear
+(Written by R.              )
+
+. 
+. summarize
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+         len |        60    18.81333    7.649315        4.2       33.9
+        supp |        60         1.5    .5042195          1          2
+        dose |        60    1.166667    .6288722         .5          2
+
+. 
+. egen dosec = group(dose), label
+
+. quietly anova len dosec#supp
+
+. quietly margins dosec#supp
+
+. 
+. marginsplot, noci title("") xtitle(Dose (mg/day)) ytitle(Length (oc. unit)) /
+> //
+>   addplot(scatter len dosec if supp == 1, ms(oh) jitter(5) ///
+>   mc(ebblue) text(20 1 "OJ", color(ebblue) size(medlarge)) ///
+>   xscale(r(0 4)) xlab(0(1)3) || scatter len dosec if supp == 2, ///
+>   ms(oh) jitter(5) mc(orange) text(10 2 "VC", color(orange) ///
+>   size(medlarge))) scheme(uncluttered)
+
+  Variables that uniquely identify margins: dosec supp
+
+. graph export "figs/fig-01-06.eps", replace
+(note: file figs/fig-01-06.eps not found)
+(file figs/fig-01-06.eps written in EPS format)
 
 . 
 . quietly capture log close

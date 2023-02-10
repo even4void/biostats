@@ -70,4 +70,21 @@ graph export "figs/fig-01-05.eps", replace
 
 pwmean weight, over(type level) pveffects mcompare(tukey)
 
+// ToothGrowth data
+use ../data/toothgrowth, clear
+
+summarize
+
+egen dosec = group(dose), label
+quietly anova len dosec#supp
+quietly margins dosec#supp
+
+marginsplot, noci title("") xtitle(Dose (mg/day)) ytitle(Length (oc. unit)) ///
+  addplot(scatter len dosec if supp == 1, ms(oh) jitter(5) ///
+  mc(ebblue) text(20 1 "OJ", color(ebblue) size(medlarge)) ///
+  xscale(r(0 4)) xlab(0(1)3) || scatter len dosec if supp == 2, ///
+  ms(oh) jitter(5) mc(orange) text(10 2 "VC", color(orange) ///
+  size(medlarge))) scheme(uncluttered)
+graph export "figs/fig-01-06.eps", replace
+
 quietly capture log close
