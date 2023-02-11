@@ -74,9 +74,10 @@ regress fev height height2
 predict yhat1
 label variable yhat1 "Quadratic term"
 estimates store m1
-fp <height>, scale: regress fev <height>
+orthpoly height, deg(3) generate(heightpw*)
+regress fev heightpw*
 predict yhat2
-label variable yhat2 "Fractional polynomial"
+label variable yhat2 "Orthogonal polynomials"
 estimates store m2
 // Note: To reproduce rms::rcs, we would need the following steps:
 // _pctile height, p(10 50 90)
@@ -89,13 +90,21 @@ regress fev height3*
 predict yhat3
 label variable yhat3 "Restricted cubic splines"
 estimates store m3
+fp <height>, scale: regress fev <height>
+// or, maybe:
+// mfp, df(height:4) : regress fev height
+predict yhat4
+label variable yhat4 "Fractional polynomial"
+estimates store m4
 estimates table m*
+estimates drop m*
 
 twoway scatter fev height, ms(oh) ///
   || connected yhat1 height,  sort(height) ms(i) lc(ebblue) lp(l) ///
   || connected yhat2 height, sort(height) ms(i) lc(orange) lp(l) ///
   || connected yhat3 height, sort(height) ms(i) lc(erose) lp(l) ///
-  ytitle(Fitted values) legend(order(2 3 4) position(11) ring(0))
+  || connected yhat4 height, sort(height) ms(i) lc(stone) lp(l) ///
+  ytitle(Fitted values) legend(order(2 3 4 5) position(11) ring(0))
 graph export "figs/fig-02-06.eps", replace
 
 regress fev c.smoke
@@ -108,10 +117,35 @@ tabstat fev, by(ageQ4) stats(mean sd)
 // egen fevQ4mean = mean(fev), by(ageQ4)
 preserve
 collapse (mean) fev, by(ageQ4)
+generate diff = fev[_n] - fev[1]
+list
 restore
 
 regress fev age
 regress fev ageQ4
 anova fev ageQ4
+
+gen high = 6
+gen low = 0
+graph twoway (rarea low high age if age <= 9, sort color(gs14)) (scatter fev age if smoke == 1, mc(orange) ms(oh) text(1.5 14 "current smoker", color(orange) size(medlarge))) (scatter fev age if smoke == 2, mc(ebblue) ms(oh) text(5 8 "non-current smoker", color(ebblue) size(medlarge))) (lowess fev age if smoke == 1, lc(orange) lp(l)) (lowess fev age if smoke == 2, lc(ebblue) lp(l)), legend(off) xtitle (Age (yr.)) ytitle (FEV (l/g))
+graph export "figs/fig-02-07.eps", replace
+
+drop high low
+
+regress fev age
+estimates store m1
+regress fev age smoke
+estimates store m2
+estimates table m*
+estimates stats m*
+estimates drop m*
+
+regress fev age ib2.smoke c.age#ib2.smoke
+
+graph twoway (lfitci fev age if smoke == 1, lc(orange) acolor(gs14) fcolor(gs14) lp(l)) (lfitci fev age if smoke == 2, lc(ebblue) acolor(gs14) fcolor(gs14) lp(l)) (scatter fev age if smoke == 1, mc(orange) ms(oh) text(1.5 14 "current smoker", color(orange) size(medlarge))) (scatter fev age if smoke == 2, mc(ebblue) ms(oh) text(5 8 "non-current smoker", color(ebblue) size(medlarge))), legend(off) xtitle (Age (yr.)) ytitle (FEV (l/g))
+graph export "figs/fig-02-08.eps", replace
+
+gen age2 = age^2
+regress fev age age2 ib2.smoke c.age#ib2.smoke
 
 quietly capture log close

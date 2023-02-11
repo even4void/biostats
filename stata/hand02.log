@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /home/chl/cwd/biostats/stata/hand02.log
   log type:  text
- opened on:   9 Feb 2023, 21:33:08
+ opened on:  12 Feb 2023, 10:54:03
 
 . 
 . // FEV data
@@ -266,41 +266,30 @@ id_ generated as str5
 
 . estimates store m1
 
-. fp <height>, scale: regress fev <height>
-(fitting 44 models)
-(....10%....20%....30%....40%....50%....60%....70%....80%....90%....100%)
+. orthpoly height, deg(3) generate(heightpw*)
 
-Fractional polynomial comparisons:
--------------------------------------------------------------------------------
-      height |   df    Deviance  Res. s.d.   Dev. dif.   P(*)   Powers
--------------+-----------------------------------------------------------------
-     omitted |    0   1668.387      0.867    973.124    0.000               
-      linear |    1    752.109      0.431     56.847    0.000   1           
-       m = 1 |    2    701.097      0.414      5.834    0.055   3           
-       m = 2 |    4    695.263      0.413      0.000       --   2 3         
--------------------------------------------------------------------------------
-(*) P = sig. level of model with m = 2 based on F with 649
-    denominator dof.
+. regress fev heightpw*
 
       Source |       SS       df       MS              Number of obs =     654
--------------+------------------------------           F(  2,   651) = 1115.83
-       Model |  380.053695     2  190.026848           Prob > F      =  0.0000
-    Residual |  110.866138   651  .170301288           R-squared     =  0.7742
--------------+------------------------------           Adj R-squared =  0.7735
-       Total |  490.919833   653  .751791475           Root MSE      =  .41268
+-------------+------------------------------           F(  3,   650) =  742.75
+       Model |   380.05409     3  126.684697           Prob > F      =  0.0000
+    Residual |  110.865744   650  .170562683           R-squared     =  0.7742
+-------------+------------------------------           Adj R-squared =  0.7731
+       Total |  490.919833   653  .751791475           Root MSE      =  .41299
 
 ------------------------------------------------------------------------------
          fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
-    height_1 |  -.0157149   .0065067    -2.42   0.016    -.0284916   -.0029382
-    height_2 |   .0014036   .0002787     5.04   0.000     .0008563     .001951
-       _cons |   1.066063   .5171885     2.06   0.040     .0505043    2.081622
+   heightpw1 |   .7521487   .0161493    46.57   0.000     .7204376    .7838597
+   heightpw2 |     .12387   .0161493     7.67   0.000      .092159    .1555811
+   heightpw3 |    .007147   .0161493     0.44   0.658    -.0245641    .0388581
+       _cons |    2.63678   .0161493   163.28   0.000     2.605069    2.668491
 ------------------------------------------------------------------------------
 
 . predict yhat2
 (option xb assumed; fitted values)
 
-. label variable yhat2 "Fractional polynomial"
+. label variable yhat2 "Orthogonal polynomials"
 
 . estimates store m2
 
@@ -338,28 +327,74 @@ Fractional polynomial comparisons:
 
 . estimates store m3
 
+. fp <height>, scale: regress fev <height>
+(fitting 44 models)
+(....10%....20%....30%....40%....50%....60%....70%....80%....90%....100%)
+
+Fractional polynomial comparisons:
+-------------------------------------------------------------------------------
+      height |   df    Deviance  Res. s.d.   Dev. dif.   P(*)   Powers
+-------------+-----------------------------------------------------------------
+     omitted |    0   1668.387      0.867    973.124    0.000               
+      linear |    1    752.109      0.431     56.847    0.000   1           
+       m = 1 |    2    701.097      0.414      5.834    0.055   3           
+       m = 2 |    4    695.263      0.413      0.000       --   2 3         
+-------------------------------------------------------------------------------
+(*) P = sig. level of model with m = 2 based on F with 649
+    denominator dof.
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  2,   651) = 1115.83
+       Model |  380.053695     2  190.026848           Prob > F      =  0.0000
+    Residual |  110.866138   651  .170301288           R-squared     =  0.7742
+-------------+------------------------------           Adj R-squared =  0.7735
+       Total |  490.919833   653  .751791475           Root MSE      =  .41268
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    height_1 |  -.0157149   .0065067    -2.42   0.016    -.0284916   -.0029382
+    height_2 |   .0014036   .0002787     5.04   0.000     .0008563     .001951
+       _cons |   1.066063   .5171885     2.06   0.040     .0505043    2.081622
+------------------------------------------------------------------------------
+
+. // or, maybe:
+. // mfp, df(height:4) : regress fev height
+. predict yhat4
+(option xb assumed; fitted values)
+
+. label variable yhat4 "Fractional polynomial"
+
+. estimates store m4
+
 . estimates table m*
 
------------------------------------------------------
-    Variable |     m1           m2           m3      
--------------+---------------------------------------
-      height |  -.0984444                            
-     height2 |  .00048908                            
-    height_1 |               -.0157149               
-    height_2 |               .00140364               
-    height31 |                            .02574687  
-    height32 |                            .06890397  
-    height33 |                           -.36980806  
-    height34 |                            .67053326  
-       _cons |  6.0268765    1.0660631   -1.8364119  
------------------------------------------------------
+------------------------------------------------------------------
+    Variable |     m1           m2           m3           m4      
+-------------+----------------------------------------------------
+      height |  -.0984444                                         
+     height2 |  .00048908                                         
+   heightpw1 |               .75214866                            
+   heightpw2 |               .12387002                            
+   heightpw3 |                 .007147                            
+    height31 |                            .02574687               
+    height32 |                            .06890397               
+    height33 |                           -.36980806               
+    height34 |                            .67053326               
+    height_1 |                                         -.0157149  
+    height_2 |                                         .00140364  
+       _cons |  6.0268765    2.6367798   -1.8364119    1.0660631  
+------------------------------------------------------------------
+
+. estimates drop m*
 
 . 
 . twoway scatter fev height, ms(oh) ///
 >   || connected yhat1 height,  sort(height) ms(i) lc(ebblue) lp(l) ///
 >   || connected yhat2 height, sort(height) ms(i) lc(orange) lp(l) ///
 >   || connected yhat3 height, sort(height) ms(i) lc(erose) lp(l) ///
->   ytitle(Fitted values) legend(order(2 3 4) position(11) ring(0))
+>   || connected yhat4 height, sort(height) ms(i) lc(stone) lp(l) ///
+>   ytitle(Fitted values) legend(order(2 3 4 5) position(11) ring(0))
 
 . graph export "figs/fig-02-06.eps", replace
 (file figs/fig-02-06.eps written in EPS format)
@@ -425,6 +460,19 @@ Summary for variables: fev
 
 . collapse (mean) fev, by(ageQ4)
 
+. generate diff = fev[_n] - fev[1]
+
+. list
+
+     +-----------------------------+
+     | ageQ4        fev       diff |
+     |-----------------------------|
+  1. |     1   1.858228          0 |
+  2. |     2   2.551571   .6933434 |
+  3. |     3   3.110728     1.2525 |
+  4. |     4   3.599427   1.741199 |
+     +-----------------------------+
+
 . restore
 
 . 
@@ -474,6 +522,150 @@ Summary for variables: fev
                 Residual |  217.885596   650  .335208609   
               -----------+----------------------------------------------------
                    Total |  490.919833   653  .751791475   
+
+. 
+. gen high = 6
+
+. gen low = 0
+
+. graph twoway (rarea low high age if age <= 9, sort color(gs14)) (scatter fev 
+> age if smoke == 1, mc(orange) ms(oh) text(1.5 14 "current smoker", color(oran
+> ge) size(medlarge))) (scatter fev age if smoke == 2, mc(ebblue) ms(oh) text(5
+>  8 "non-current smoker", color(ebblue) size(medlarge))) (lowess fev age if sm
+> oke == 1, lc(orange) lp(l)) (lowess fev age if smoke == 2, lc(ebblue) lp(l)),
+>  legend(off) xtitle (Age (yr.)) ytitle (FEV (l/g))
+
+. graph export "figs/fig-02-07.eps", replace
+(note: file figs/fig-02-07.eps not found)
+(file figs/fig-02-07.eps written in EPS format)
+
+. 
+. drop high low
+
+. 
+. regress fev age
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  1,   652) =  877.86
+       Model |  281.697674     1  281.697674           Prob > F      =  0.0000
+    Residual |  209.222159   652  .320892882           R-squared     =  0.5738
+-------------+------------------------------           Adj R-squared =  0.5732
+       Total |  490.919833   653  .751791475           Root MSE      =  .56647
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |    .223869   .0075558    29.63   0.000     .2090323    .2387057
+       _cons |   .4138361   .0782285     5.29   0.000     .2602259    .5674462
+------------------------------------------------------------------------------
+
+. estimates store m1
+
+. regress fev age smoke
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  2,   651) =  446.14
+       Model |  283.836178     2  141.918089           Prob > F      =  0.0000
+    Residual |  207.083655   651  .318100853           R-squared     =  0.5782
+-------------+------------------------------           Adj R-squared =  0.5769
+       Total |  490.919833   653  .751791475           Root MSE      =    .564
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |    .232476   .0082227    28.27   0.000     .2163297    .2486222
+       smoke |   .2089107   .0805727     2.59   0.010     .0506969    .3671246
+       _cons |  -.0686866   .2017411    -0.34   0.734    -.4648283    .3274552
+------------------------------------------------------------------------------
+
+. estimates store m2
+
+. estimates table m*
+
+----------------------------------------
+    Variable |     m1           m2      
+-------------+--------------------------
+         age |  .22386899    .23247597  
+       smoke |               .20891073  
+       _cons |  .41383608   -.06868656  
+----------------------------------------
+
+. estimates stats m*
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |    Obs    ll(null)   ll(model)     df          AIC         BIC
+-------------+---------------------------------------------------------------
+          m1 |    654   -834.1935   -555.3004      2     1114.601    1123.567
+          m2 |    654   -834.1935   -551.9409      3     1109.882    1123.331
+-----------------------------------------------------------------------------
+               Note:  N=Obs used in calculating BIC; see [R] BIC note
+
+. estimates drop m*
+
+. 
+. regress fev age ib2.smoke c.age#ib2.smoke
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  3,   650) =  317.23
+       Model |  291.693042     3  97.2310139           Prob > F      =  0.0000
+    Residual |  199.226792   650  .306502756           R-squared     =  0.5942
+-------------+------------------------------           Adj R-squared =  0.5923
+       Total |  490.919833   653  .751791475           Root MSE      =  .55363
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |   .2437043   .0083706    29.11   0.000     .2272677    .2601409
+             |
+       smoke |
+current s..  |   1.904894   .4249261     4.48   0.000       1.0705    2.739287
+             |
+ smoke#c.age |
+current s..  |  -.1599594   .0315938    -5.06   0.000    -.2219977   -.0979211
+             |
+       _cons |   .2420561   .0830214     2.92   0.004     .0790335    .4050786
+------------------------------------------------------------------------------
+
+. 
+. graph twoway (lfitci fev age if smoke == 1, lc(orange) acolor(gs14) fcolor(gs
+> 14) lp(l)) (lfitci fev age if smoke == 2, lc(ebblue) acolor(gs14) fcolor(gs14
+> ) lp(l)) (scatter fev age if smoke == 1, mc(orange) ms(oh) text(1.5 14 "curre
+> nt smoker", color(orange) size(medlarge))) (scatter fev age if smoke == 2, mc
+> (ebblue) ms(oh) text(5 8 "non-current smoker", color(ebblue) size(medlarge)))
+> , legend(off) xtitle (Age (yr.)) ytitle (FEV (l/g))
+
+. graph export "figs/fig-02-08.eps", replace
+(note: file figs/fig-02-08.eps not found)
+(file figs/fig-02-08.eps written in EPS format)
+
+. 
+. gen age2 = age^2
+
+. regress fev age age2 ib2.smoke c.age#ib2.smoke
+
+      Source |       SS       df       MS              Number of obs =     654
+-------------+------------------------------           F(  4,   649) =  239.83
+       Model |  292.822522     4  73.2056304           Prob > F      =  0.0000
+    Residual |  198.097312   649  .305234687           R-squared     =  0.5965
+-------------+------------------------------           Adj R-squared =  0.5940
+       Total |  490.919833   653  .751791475           Root MSE      =  .55248
+
+------------------------------------------------------------------------------
+         fev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |   .3246539   .0429027     7.57   0.000     .2404091    .4088987
+        age2 |  -.0039975   .0020781    -1.92   0.055    -.0080782    .0000831
+             |
+       smoke |
+current s..  |   1.554903   .4614306     3.37   0.001      .648826     2.46098
+             |
+ smoke#c.age |
+current s..  |  -.1314576   .0348364    -3.77   0.000    -.1998632   -.0630519
+             |
+       _cons |  -.1366758   .2136052    -0.64   0.522    -.5561166     .282765
+------------------------------------------------------------------------------
 
 . 
 . quietly capture log close

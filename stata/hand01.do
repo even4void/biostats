@@ -79,12 +79,14 @@ egen dosec = group(dose), label
 quietly anova len dosec#supp
 quietly margins dosec#supp
 
-marginsplot, noci title("") xtitle(Dose (mg/day)) ytitle(Length (oc. unit)) ///
-  addplot(scatter len dosec if supp == 1, ms(oh) jitter(5) ///
-  mc(ebblue) text(20 1 "OJ", color(ebblue) size(medlarge)) ///
-  xscale(r(0 4)) xlab(0(1)3) || scatter len dosec if supp == 2, ///
-  ms(oh) jitter(5) mc(orange) text(10 2 "VC", color(orange) ///
-  size(medlarge))) scheme(uncluttered)
+marginsplot, noci recast(line) ///
+  plot1opts(lcolor(ebblue)) plot2opts(lcolor(orange)) ///
+  addplot((scatter len dosec if supp == 1, ms(oh) mcolor(ebblue) ///
+  jitter(5) text(20 1.25 "OJ", color(ebblue) size(medlarge))) ///
+  (scatter len dosec if supp == 2, ms(oh) mcolor(orange) ///
+  jitter(5) text(10 1.75 "VC", color(orange) size(medlarge)))) ///
+  ytitle(Length (oc. unit)) xtitle(Dose (mg/day)) xscale(range(0.75 3.25)) ///
+  title("") legend(off)
 graph export "figs/fig-01-06.eps", replace
 
 quietly capture log close

@@ -123,8 +123,6 @@ confint(m)
 t.test(fev ~ smoke, data = FEV, var.equal = TRUE)
 
 FEV$age4 <- cut2(FEV$age, g = 4)
-r <- with(FEV, summarize(fev, age4, smean.sd))
-r
 r$fev[2:4] - r$fev[1]
 m1 <- lm(fev ~ age, data = FEV)
 m2 <- lm(fev ~ age4, data = FEV)
