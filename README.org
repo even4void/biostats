@@ -2,7 +2,7 @@
 
 ** Overview
 
-This repository holds code for reproducing [[https://even4void.github.io/rstats-biostats/][Méthodes biostatistiques]] in various languages, currently R, Stata, and Python. Planned DSL and general purpose languages include Clojure, Racket, Julia, Mathematica, and probably Lisp-Stat.
+This repository holds code for reproducing [[https://even4void.github.io/rstats-biostats/][Méthodes biostatistiques]] in various languages, currently R, Stata, Python, Mathematica and Racket. Planned DSL and general purpose languages include Clojure, Julia, and probably Lisp-Stat.
 
 ** Work in progress
 
@@ -12,6 +12,7 @@ Be aware this is wip and highly subjected to =git push -f=.
 
 ** Changelog
 
+- 2023-02-12 chl - Add Mathematica and Racket code
 - 2023-02-07 chl - Add more Python code
 - 2023-02-06 chl - Add some Python and Stata code
 - 2023-02-05 chl - Add R code
