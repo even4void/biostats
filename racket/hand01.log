@@ -1,0 +1,10 @@
+data-frame: 6 columns, 654 rows, 0 indexes
+properties:
+series:
+           NAs           min           max          mean        stddev
+  age        0             3            19          9.93          2.95
+  fev        0          0.79          5.79          2.64          0.87
+  height     0            46            74         61.14           5.7
+  id         0           201         90001      37169.57      23672.74
+  sex        0        +inf.0        -inf.0        +nan.0        +nan.0
+  smoke      0        +inf.0        -inf.0        +nan.0        +nan.0
