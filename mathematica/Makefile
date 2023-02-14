@@ -7,7 +7,7 @@ all: dist
 dist: $(SRC)
 
 %.log: %.wls
-	wolframscript -format PDF $<
+	wolframscript $<
 
 clean:
 	rm -rf *.log figs/*
