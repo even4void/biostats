@@ -5,13 +5,10 @@
 
 (histogram age)
 
-; HACK: use a loop to construct variable name
-; (set (intern "GENO1") (select age (which (= 1 genotype))))
-; (dotimes (n 3) (print (1+ n)))
-; (mapcar (lambda(x) (concatenate 'string "geno" x)) '("1" "2" "3"))
-(def geno1 (select age (which (= 1 genotype))))
-(def geno2 (select age (which (= 2 genotype))))
-(def geno3 (select age (which (= 3 genotype))))
+(dolist (n (iseq 1 3))
+    (set (intern (concatenate 'string "GENO"
+                              (write-to-string n)))
+         (select age (which (= n genotype)))))
 
 (boxplot (list geno1 geno2 geno3))
 
