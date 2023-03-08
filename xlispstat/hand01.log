@@ -1,0 +1,95 @@
+T
+> 
+;; genotype data
+(def data (read-data-columns "../data/polymorphism.dat"))
+DATA
+> (def age (select data 0))
+AGE
+> (def genotype (select data 1))
+GENOTYPE
+> 
+(histogram age)
+#<Object: 55ad16cbc8b0, prototype = HISTOGRAM-PROTO>
+> 
+(dolist (n (iseq 1 3))
+    (set (intern (concatenate 'string "GENO"
+                              (write-to-string n)))
+         (select age (which (= n genotype)))))
+NIL
+> 
+(boxplot (list geno1 geno2 geno3))
+#<Object: 55ad16ce1470, prototype = SCATTERPLOT-PROTO>
+> (require "oneway") ;; better than "oneway" default module
+; loading oneway.lsp
+NIL
+> (def m (oneway-model (list geno1 geno2 geno3) :print nil))
+M
+> (send m :display)
+
+Least Squares Estimates:
+
+Group 0                    64.6429      (3.24308)
+Group 1                    64.3793      (2.25332)
+Group 2                    50.3750      (3.03363)
+
+R Squared:                0.219261    
+Sigma hat:                 12.1345    
+Number of cases:                59
+Degrees of freedom:             56
+
+
+Analysis of Variance Table
+-----------------------------------------------------------
+Source        df    SS          MS             F   p-value
+-----------------------------------------------------------
+Treatment     2   2315.73     1157.87         7.86   0.0010
+Error        56   8245.79     147.246    
+-----------------------------------------------------------
+Total        58   10561.5    
+
+Error: The function QRTRNG is not defined.
+Happened in: #<Closure-DISPLAY-TUKEY-GROUPINGS: #55ad16d09b10>
+> (send m :all-paired-comparisons)
+Error: The function QRTRNG is not defined.
+Happened in: #<Closure-ALL-PAIRED-COMPARISONS: #55ad16d047f0>
+> (send m :individual-ci)
+
+ ---- Individual CI's based on Pooled Std. Dev ----
+Group      N   Mean          SD              CI          
+---------------------------------------------------------
+Group 0:   14 64.6429     11.1811     (61.9410    , 67.3447    )
+Group 1:   29 64.3793     13.2595     (62.5020    , 66.2566    )
+Group 2:   16 50.3750     10.6388     (47.8476    , 52.9024    )
+NIL
+> (send m :boxplots)
+#<Object: 55ad16d56390, prototype = SCATTERPLOT-PROTO>
+> (undef (variables))
+(AGE DATA GENOTYPE M)
+> (def data (read-data-columns "../data/toothgrowth.dat"))
+DATA
+> (def len (select data 0))
+LEN
+> (def supp (select data 1))
+SUPP
+> (def dose (select data 2))
+DOSE
+> 
+(def x1 (select dose (which (= 1 supp))))
+X1
+> (def y1 (select len (which (= 1 supp))))
+Y1
+> (def x2 (select dose (which (= 2 supp))))
+X2
+> (def y2 (select len (which (= 2 supp))))
+Y2
+> 
+(setf p (plot-points x1 y1))
+#<Object: 55ad16dabdf0, prototype = SCATTERPLOT-PROTO>
+> (send p :point-symbol (iseq (length y1)) 'diamond)
+(DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND DIAMOND)
+> (send p :add-points (list x2 y2))
+NIL
+> (send p :redraw)
+NIL
+> 
+(dribble)
