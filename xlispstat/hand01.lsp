@@ -14,9 +14,9 @@
 
 (boxplot (list geno1 geno2 geno3))
 
-(require "nonpar") ;; also import standard "oneway" module
+(require "oneway") ;; better than "oneway" default module
 
-(def m (oneway-model (list geno1 geno2 geno3) :print t))
+(def m (oneway-model (list geno1 geno2 geno3) :print nil))
 (send m :display)
 (send m :all-paired-comparisons)
 (send m :individual-ci)

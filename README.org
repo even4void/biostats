@@ -2,7 +2,21 @@
 
 ** Overview
 
-This repository holds code for reproducing [[https://even4void.github.io/rstats-biostats/][Méthodes biostatistiques]] in various languages, currently R, Stata, Python, Mathematica and Racket. Planned DSL and general purpose languages include Clojure, Julia, and probably Lisp-Stat.
+This repository holds code for reproducing [[https://even4void.github.io/rstats-biostats/][Méthodes biostatistiques]] in various languages, currently R, Stata, Python, Mathematica, LispStat (the original LispStat written by Luke Tierney) and Racket. Planned DSL and general purpose languages include Clojure, Julia, and Haskell.
+
+** What's in the box
+
+Dependencies (external tools, packages, libraries or modules) are listed in the =INSTALL= file. The =Makefile= should run the code, produce a log file as well as figures in PDF or EPS format.
+
+Versions:
+
+- Stata 13.1 MP
+- R 4.2.2 Patched (2022-11-10 r83330)
+- Python 3.10.6
+- xlispstat 3.52.23 (alpha)
+- Racket 8.6 [cs]
+- Mathematica 13.2 (Home edition)
+- Newlisp 10.7.5
 
 ** Work in progress
 
@@ -12,7 +26,10 @@ Be aware this is wip and highly subjected to =git push -f=.
 
 ** Changelog
 
+- 2023-03-17 chl - Add some Newlisp code (unpublished)
+- 2023-03-08 chl - Add some LispStat code
 - 2023-02-12 chl - Add Mathematica and Racket code
 - 2023-02-07 chl - Add more Python code
 - 2023-02-06 chl - Add some Python and Stata code
 - 2023-02-05 chl - Add R code
+
